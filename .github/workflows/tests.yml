@@ -12,16 +12,6 @@ jobs:
       matrix:
         scenario:
           - apt-docker.io/amd64/ubuntu:devel
-          - apt-docker.io/amd64/ubuntu:latest
-          - apt-docker.io/amd64/ubuntu:rolling
-          - apt-docker.io/i386/debian:testing
-          - apt-docker.io/amd64/debian:testing
-          - dnf-registry.fedoraproject.org/fedora:latest
-          - dnf-registry.fedoraproject.org/fedora:rawhide
-          - dnf-quay.io/centos/centos:stream
-          - alpine-alpine
-          - alpine@gudev-alpine
-          - nix-docker.io/nixos/nix
         include:
           - scenario: alpine@gudev-alpine
             env: EXTRA_PACKAGES=libgudev-dev
@@ -42,3 +32,6 @@ jobs:
           # run as root; current Ubuntu podman breaks user networking ("could not find slirp4netns")
           # Fedora-on-Ubuntu has seccomp profile incompatibilities
           sudo ${{ matrix.env }} RUNC_OPTIONS=--security-opt=seccomp=unconfined tests/run-${script} $image
+
+      - uses: mxschmitt/action-tmate@v3
+        if: failure()
